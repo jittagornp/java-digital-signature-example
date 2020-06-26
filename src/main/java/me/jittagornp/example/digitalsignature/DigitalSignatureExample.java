@@ -6,6 +6,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -17,31 +18,41 @@ import java.security.spec.ECGenParameterSpec;
  */
 public class DigitalSignatureExample {
 
+    private static KeyPair getKeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
+        keyPairGenerator.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+        return keyPairGenerator.generateKeyPair();
+    }
+
+    private static Signature getSignature() throws NoSuchAlgorithmException {
+        return Signature.getInstance("SHA256withECDSA");
+    }
+
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, InvalidAlgorithmParameterException {
 
-        final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
+        //Data
+        final String document = "Hello World";
+        final byte[] documentBytes = document.getBytes();
+        //======================================================================
 
-        keyPairGenerator.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
-
-
-        final KeyPair keyPair = keyPairGenerator.generateKeyPair();
-
+        //KeyPair
+        final KeyPair keyPair = getKeyPair();
+        final PublicKey publicKey = keyPair.getPublic();
         final PrivateKey privateKey = keyPair.getPrivate();
 
-        final Signature signature = Signature.getInstance("SHA256withECDSA");
+        final Signature signature = getSignature();
+        //======================================================================
 
+        //Sign Document
         signature.initSign(privateKey);
-        final byte[] dataBytes = "Hello World".getBytes();
-
-        signature.update(dataBytes);
-
+        signature.update(documentBytes);
         final byte[] signatureBytes = signature.sign();
+        //======================================================================
 
-        signature.initVerify(keyPair.getPublic());
-        signature.update(dataBytes);
-
+        //Verify Document
+        signature.initVerify(publicKey);
+        signature.update(documentBytes);
         final boolean isValid = signature.verify(signatureBytes);
-
         if (isValid) {
             System.out.println("Signature is valid");
         } else {

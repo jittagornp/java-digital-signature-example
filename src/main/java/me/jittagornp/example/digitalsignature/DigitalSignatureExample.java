@@ -13,7 +13,6 @@ import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
 
 /**
- *
  * @author jitta
  */
 public class DigitalSignatureExample {
@@ -40,6 +39,7 @@ public class DigitalSignatureExample {
         final PublicKey publicKey = keyPair.getPublic();
         final PrivateKey privateKey = keyPair.getPrivate();
 
+        //Signature
         final Signature signature = getSignature();
         //======================================================================
 
@@ -51,6 +51,8 @@ public class DigitalSignatureExample {
 
         //Verify Document
         signature.initVerify(publicKey);
+
+        //Compare Data and Signature
         signature.update(documentBytes);
         final boolean isValid = signature.verify(signatureBytes);
         if (isValid) {

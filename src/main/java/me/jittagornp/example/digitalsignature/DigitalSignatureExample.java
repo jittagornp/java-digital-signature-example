@@ -29,17 +29,17 @@ public class DigitalSignatureExample {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, InvalidAlgorithmParameterException {
 
-        //1. Data
+        //1. Define Data
         final String document = "Hello World";
         final byte[] documentBytes = document.getBytes();
         //====================================================
 
-        //2. KeyPair
+        //2. Define KeyPair
         final KeyPair keyPair = getKeyPair();
         final PublicKey publicKey = keyPair.getPublic();
         final PrivateKey privateKey = keyPair.getPrivate();
 
-        //3. Signature
+        //3. Define Signature
         final Signature signature = getSignature();
         //====================================================
 
